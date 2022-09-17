@@ -1,0 +1,21 @@
+使用临时备注
+
+
+控制器
+    控制台路由
+    php72 yii help // 可以查看所有的commands，包括控制器/方法
+    如：
+        ...
+
+        - help                         Provides help information about console commands.
+            help/index (default)       Displays available commands or the detailed information
+            help/list                  List all available controllers and actions in machine readable format.
+            help/list-action-options   List all available options for the $action in machine readable format.
+            help/usage                 Displays usage information for $action.
+
+        - index                        
+            index/index (default)
+
+        ...
+
+
