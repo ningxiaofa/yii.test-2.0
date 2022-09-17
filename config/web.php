@@ -1,5 +1,8 @@
 <?php
 
+// 很多的配置默认参数，参见 vendor/yiisoft/yii2/base/Application.php
+// https://www.yiiframework.com/doc/api/2.0/yii-base-application#$controllerNamespace-detail
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -53,6 +56,22 @@ $config = [
         */
     ],
     'params' => $params,
+
+    // 默认的控制器命令空间
+    'controllerNamespace' => 'app\\controllers',
+    
+    // 强制控制器ID和类名对应， 通常用在使用第三方不能掌控类名的控制器上。
+    // 但是视图文件还是会找到account目录的对应的视图文件, 应该也是可以改的，具体如何做，TBD
+    'controllerMap' => [
+        // 用类名申明 "account" 控制器
+        'account' => 'app\controllers\IndexController', 
+
+        // 用配置数组申明 "article" 控制器
+        'article' => [
+            'class' => 'app\controllers\IndexController',
+            'enableCsrfValidation' => false,
+        ],
+    ],
 ];
 
 if (YII_ENV_DEV) {
