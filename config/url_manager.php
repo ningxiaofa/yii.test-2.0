@@ -56,5 +56,11 @@ return [
         'PUT,POST blog/<id:\d+>' => 'blog/update',
         'DELETE blog/<id:\d+>' => 'blog/delete',
         'blog/<id:\d+>' => 'blog/view',
+
+        // 创建规则类
+        [
+            'class' => 'app\components\CarUrlRule',
+            // ...配置其它参数...
+        ],
     ],
 ];
