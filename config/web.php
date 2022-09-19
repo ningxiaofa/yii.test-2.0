@@ -6,6 +6,9 @@
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
+// Added by self
+$urlManager = require __DIR__ . '/url_manager.php';
+
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
@@ -47,32 +50,8 @@ $config = [
         ],
         'db' => $db,
 
-        // url美化
-        'urlManager' => [
-            'enablePrettyUrl' => true, // 仅此必须项
-            'showScriptName' => false,
-            'enableStrictParsing' => false,
-
-            // 可选项, 添加一些特殊选项，个人不是很推荐大量使用，而应该只是针对特殊情况
-            'rules' => [
-                // code here
-                'posts' => 'post/index',
-
-                // http://yii.test:8080/test/100
-                'test/<id:\d+>' => 'test/view',
-
-                // http://yii.test:8080/test/index?id=100
-                // http://yii.test:8080/test/index/100
-                'test/index/<id:\w+>' => 'test/index',
-
-                // ...其它 URL 规则...
-                [
-                    'pattern' => 'posts',
-                    'route' => 'posts/index',
-                    'suffix' => '.json',
-                ],
-            ],
-        ],
+        // url美化 「https://www.yiiframework.com/doc/guide/2.0/zh-cn/runtime-routing」
+        'urlManager' => $urlManager,
     ],
     'params' => $params,
 

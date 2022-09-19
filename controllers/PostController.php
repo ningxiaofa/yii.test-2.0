@@ -6,6 +6,8 @@ use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use Yii;
 
+// 所有的路由规则参见，web.php中components.urlManager「可以将其独立出去，为单独的文件，参考db.php params.php」
+
 class PostController extends Controller
 {
     // http://yii.test:8080/posts
@@ -31,4 +33,25 @@ class PostController extends Controller
         }
         return Yii::$app->response->sendFile("$storagePath/$filename", $filename);
     }
+
+    // 这里的默认值是不起作用的，因为前端请求的参数会覆盖
+    public function actionList($page = 1, $tag = 'php') 
+    {
+        var_dump($page, $tag); 
+        // http://yii.test:8080/posts ==> int(1) string(0) ""
+        // http://yii.test:8080/posts/php ==> int(1) string(3) "php"
+        // http://yii.test:8080/posts/2/php ==> string(1) "2" string(3) "php"
+    }
+
+    // 仅仅支持PUT,POST请求方法
+    public function actionUpdate($id)
+    {
+        var_dump($id);
+    }
+
+    public function actionView($id)
+    {
+        var_dump($id); 
+    }
+
 }
