@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use yii\web\Controller;
+use yii\web\Response;
 use Yii;
 
 class TestController extends Controller
@@ -36,7 +37,7 @@ class TestController extends Controller
         // 返回 Accept header 值
         $accept = $headers->get('Accept'); //  string(3) "*/*"
         var_dump($accept);
-        
+
         if ($headers->has('User-Agent')) {
             var_dump('这是一个 User-Agent 头'); // string(27) "这是一个 User-Agent 头"
         }
@@ -149,13 +150,13 @@ class TestController extends Controller
         if ($request->isAjax) { // 这是怎么判断的？TBD
             return '该请求是一个 AJAX 请求';
         }
-        if ($request->isGet) { 
+        if ($request->isGet) {
             return '请求方法是 GET';
         }
         if ($request->isPost) {
             return '请求方法是 POST';
         }
-        if ($request->isPut) { 
+        if ($request->isPut) {
             return '请求方法是 PUT';
         }
     }
@@ -177,4 +178,155 @@ class TestController extends Controller
         echo $res;
         //dump(phpinfo());//所有PHP配置信息
     }
+
+
+    // https://www.yiiframework.com/doc/guide/2.0/zh-cn/runtime-responses
+    // 响应
+    public function actionJson()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'message' => 'hello world',
+            'code' => 100,
+        ];
+    }
+
+    public function actionXml()
+    {
+        Yii::$app->response->format = Response::FORMAT_XML;
+
+        return [
+            'message' => 'hello world',
+            'code' => 100,
+        ];
+    }
+
+    public function actionRaw()
+    {
+        Yii::$app->response->format = Response::FORMAT_RAW;
+
+        return json_encode([
+            'message' => 'hello world',
+            'code' => 100,
+        ]);
+    }
+
+    // 注意： 如果创建你自己的响应对象，将不能在应用配置中设置 response 组件，尽管如此， 可使用 依赖注入 应用通用配置到你新的响应对象 -- 还是推荐使用默认的 response 应用组件
+    public function actionNewResponse()
+    {
+        $confArr = [
+            'class' => 'yii\web\Response',
+            'format' => Response::FORMAT_JSON,
+            'data' => [
+                'message' => 'hello world',
+                'code' => 100,
+            ],
+        ];
+
+        return Yii::createObject($confArr);
+    }
+
+    // 浏览器跳转
+    public function actionOld()
+    {
+        // 正常运行 -- 浏览器
+        // 使用Postman也是正常运行，只不过看不到重定向的过程，而是直接返回新接口的响应内容
+        // return $this->redirect('/test/new', 301);
+
+        // 有问题，原因应是没有明确指明http的协议, 到底是使用http还是https
+        // return $this->redirect('yii.test:8080/test/new', 301); // 错误用法
+
+        // 应该使用下面的方式
+        // return $this->redirect('http://yii.test:8080/test/new', 301);
+
+        // 或者
+        Yii::$app->response->redirect('http://yii.test:8080/test/new', 301)->send();
+
+
+        // 如果当前请求为 AJAX 请求，发送一个 Location 头不会自动使浏览器跳转，为解决这个问题， yii\web\Response::redirect() 方法设置一个值为要跳转的URL的 X-Redirect 头， 在客户端可编写 JavaScript 代码读取该头部值然后让浏览器跳转对应的 URL。
+
+    }
+
+    public function actionNew()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+
+        return [
+            'message' => 'this is new api',
+            'code' => 100,
+        ];
+    }
+
+    // ----------------------------分割线-----------------------
+    // 发送文件
+    // 和浏览器跳转类似，文件发送是另一个依赖指定 HTTP 头的功能， Yii 提供方法集合来支持各种文件发送需求，它们对 HTTP 头都有内置的支持。
+
+    // yii\web\Response::sendFile()：发送一个已存在的文件到客户端
+    // yii\web\Response::sendContentAsFile()：发送一个文本字符串作为文件到客户端
+    // yii\web\Response::sendStreamAsFile()：发送一个已存在的文件流作为文件到客户端
+
+    // 这些方法都将响应对象作为返回值，如果要发送的文件非常大，应考虑使用 yii\web\Response::sendStreamAsFile() 因为它更节约内存， 以下示例显示在控制器操作中如何发送文件：
+    
+    // 已有文件
+    public function actionDownload()
+    {
+        $storage = Yii::getAlias('@app/storage');
+        return \Yii::$app->response->sendFile($storage . '/posts.json');
+    }
+
+    // 大文件下载的推荐方式
+    public function actionSendStreamAsFile()
+    {
+        $storage = Yii::getAlias('@app/storage');
+        return \Yii::$app->response->sendFile($storage . '/posts.json');
+    }
+
+    // 如果不是在操作方法中调用文件发送方法，在后面还应调用 yii\web\Response::send() 没有其他内容追加到响应中。
+    // 浏览器还是下载文件，有点困惑 -- TBD
+    public function actionSendContent()
+    {
+        $storage = Yii::getAlias('@app/storage');
+        return Yii::$app->response->sendFile($storage . '/posts.json')->send();
+    }
+
+    // 将内容输出为文件下载
+    public function actionSendContentAsFile()
+    {
+        $content = 'hello world';
+        return Yii::$app->response->sendContentAsFile($content, 'any-name.txt');
+    }
+
+    // 发送响应
+    // 在 yii\web\Response::send() 方法调用前，响应中的内容不会发送给用户， 
+    // 该方法默认在 yii\base\Application::run() 结尾自动调用，尽管如此，可以明确调用该方法强制立即发送响应。
+    public function actionSend()
+    {
+        // 只能为基本数据类型
+        $content = 'hello world';
+        // $content = true;
+        // $content = 123;
+        // $content = 12.34;
+        // $content = null; // 输出为空，啥都没有，即不可打印字符
+
+        // $content = [
+        //     'just for test'
+        // ]; // Invalid Argument – yii\base\InvalidArgumentException 
+        // // Response content must not be an array.
+
+        return $content;
+    }
+
+    public function actionSendNow()
+    {
+        $response =  Yii::$app->response;
+        $response->format = Response::FORMAT_JSON;
+        $response->data = [
+            'message' => 'yep, send now',
+            'code' => 100,
+        ];
+
+        return Yii::$app->response->send();
+    }
+    // 一旦 yii\web\Response::send() 方法被执行后，其他地方调用该方法会被忽略， 这意味着一旦响应发出后，就不能再追加其他内容。
 }
