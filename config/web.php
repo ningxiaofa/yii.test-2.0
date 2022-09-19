@@ -8,6 +8,7 @@ $db = require __DIR__ . '/db.php';
 
 // Added by self
 $urlManager = require __DIR__ . '/url_manager.php';
+$request = require __DIR__ . '/request.php';
 
 $config = [
     'id' => 'basic',
@@ -18,10 +19,8 @@ $config = [
         '@npm'   => '@vendor/npm-asset',
     ],
     'components' => [
-        'request' => [
-            // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-            'cookieValidationKey' => 'yNcsx_czEx5Hb1Oh93nzF34eUOiVlU5Q',
-        ],
+        'request' => $request,
+
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],

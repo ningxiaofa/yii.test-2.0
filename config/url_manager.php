@@ -87,11 +87,11 @@ return [
         'DELETE blog/<id:\d+>' => 'blog/delete',
         'blog/<id:\d+>' => 'blog/view',
 
-        // 创建规则类
-        // 注意：这个路由，很容易匹配到本来是其他的路由，顺序这一点要注意
-        [
-            'class' => 'app\components\CarUrlRule',
-            // ...配置其它参数...
-        ],
+        // // 创建规则类
+        // // 注意：这个路由，很容易匹配到本来是其他的路由，顺序这一点要注意
+        // [
+        //     'class' => 'app\components\CarUrlRule',
+        //     // ...配置其它参数...
+        // ],
     ],
 ];
