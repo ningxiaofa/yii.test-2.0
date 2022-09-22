@@ -9,6 +9,7 @@ $db = require __DIR__ . '/db.php';
 // Added by self
 $urlManager = require __DIR__ . '/url_manager.php';
 $request = require __DIR__ . '/request.php';
+$session = require __DIR__ . '/session.php';
 
 $config = [
     'id' => 'basic',
@@ -48,6 +49,7 @@ $config = [
             ],
         ],
         'db' => $db,
+        'session' => $session,
 
         // url美化 「https://www.yiiframework.com/doc/guide/2.0/zh-cn/runtime-routing」
         'urlManager' => $urlManager,
