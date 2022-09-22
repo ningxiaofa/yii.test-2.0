@@ -2,6 +2,7 @@
 
 return [
     // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
+    // 信息： cookieValidationKey 对你的应用安全很重要， 应只被你信任的人知晓，请不要将它放入版本控制中。
     'cookieValidationKey' => 'yNcsx_czEx5Hb1Oh93nzF34eUOiVlU5Q',
 
     // ...
