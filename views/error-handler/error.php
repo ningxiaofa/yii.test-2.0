@@ -1,0 +1,1 @@
+<p style="color: red;">This is self-defined error view</p>

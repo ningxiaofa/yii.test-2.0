@@ -10,6 +10,8 @@ $db = require __DIR__ . '/db.php';
 $urlManager = require __DIR__ . '/url_manager.php';
 $request = require __DIR__ . '/request.php';
 $session = require __DIR__ . '/session.php';
+$errorHandler = require __DIR__ . '/error_handler.php';
+$response = require __DIR__ . '/response.php';
 
 $config = [
     'id' => 'basic',
@@ -21,6 +23,9 @@ $config = [
     ],
     'components' => [
         'request' => $request,
+
+        // 响应
+        'response' => $response,
 
         'cache' => [
             'class' => 'yii\caching\FileCache',
@@ -53,6 +58,9 @@ $config = [
 
         // url美化 「https://www.yiiframework.com/doc/guide/2.0/zh-cn/runtime-routing」
         'urlManager' => $urlManager,
+
+        // 错误处理
+        'errorHandler' => $errorHandler,
     ],
     'params' => $params,
 
@@ -79,14 +87,14 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1', '172.18.0.1'], // 172.18.0.1是容器中的IP地址，如果不添加上，runtime/app.log中会一直写入如下warning信息：'2022-09-24 10:26:04 [172.18.0.1][100][-][warning][yii\debug\Module::checkAccess] Access to debugger is denied due to IP address restriction. The requesting IP address is 172.18.0.1' --- gii亦同
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1', '172.18.0.1'], 
     ];
 }
 
