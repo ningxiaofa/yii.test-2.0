@@ -12,15 +12,21 @@ $request = require __DIR__ . '/request.php';
 $session = require __DIR__ . '/session.php';
 $errorHandler = require __DIR__ . '/error_handler.php';
 $response = require __DIR__ . '/response.php';
+$log = require __DIR__ . '/log.php';
 
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    // log 组件必须在 bootstrapping 期间就被加载，以便于它能够及时调度日志消息到目标里。 
+    'bootstrap' => ['log',],
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
         '@npm'   => '@vendor/npm-asset',
     ],
+
+    // 设置合适的时区，因为yii应用使用到的时间日期函数，都是根据当前时区来生成的，通常在日日志中用到的比较多
+    'timeZone' => 'PRC', // 中华人民共和国
+
     'components' => [
         'request' => $request,
 
@@ -44,15 +50,10 @@ $config = [
             // for the mailer to send real emails.
             'useFileTransport' => true,
         ],
-        'log' => [
-            'traceLevel' => YII_DEBUG ? 3 : 0,
-            'targets' => [
-                [
-                    'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
-                ],
-            ],
-        ],
+
+        // 日志
+        'log' => $log,
+
         'db' => $db,
         'session' => $session,
 
